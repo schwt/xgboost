@@ -21,7 +21,9 @@ NOTES on the build
 3. export JAVA_HOME=/path/to/your/jdk
 4. make clean; make -j4; cd jvm-packages; mvn package 
 5. The build has been verified with gcc 4.8.2, cmake 3.8.2 on a CentOS 6.6 machine.
+6. To enable HDFS support, please modify jvm-packages/create_jni.py. ```"USE_HDFS": "ON"```
 
+XGBoost
 ===========
 XGBoost is an optimized distributed gradient boosting library designed to be highly ***efficient***, ***flexible*** and ***portable***.
 It implements machine learning algorithms under the [Gradient Boosting](https://en.wikipedia.org/wiki/Gradient_boosting) framework.
