@@ -1,4 +1,8 @@
 cmake_minimum_required (VERSION 3.2)
+
+set(CMAKE_C_COMPILER ${CC})
+set(CMAKE_CXX_COMPILER ${CXX})  
+
 project (xgboost)
 find_package(OpenMP)
 
@@ -12,7 +16,7 @@ endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 
 if(NOT MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -O3 -funroll-loops -msse2 -D_MWAITXINTRIN_H_INCLUDED -D_FORCE_INLINES")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -static-libgcc  -fPIC -O3 -funroll-loops -msse2 -D_MWAITXINTRIN_H_INCLUDED -D_FORCE_INLINES")
 endif()
 
 
@@ -146,7 +150,13 @@ target_link_libraries(libxgboost ${LINK_LIBRARIES})
 option(JVM_BINDINGS "Build JVM bindings" OFF)
 
 if(JVM_BINDINGS)
-    find_package(JNI QUIET REQUIRED)
+    find_package(JNI)
+
+    if (JNI_FOUND)
+        message (STATUS "JNI_INCLUDE_DIRS=${JNI_INCLUDE_DIRS}")
+        message (STATUS "JNI_LIBRARIES=${JNI_LIBRARIES}")
+    endif()
+
 
     include_directories(${JNI_INCLUDE_DIRS} jvm-packages/xgboost4j/src/native)
 
@@ -156,5 +166,5 @@ if(JVM_BINDINGS)
         jvm-packages/xgboost4j/src/native/xgboost4j.cpp)
     target_link_libraries(libxgboost4j
         ${LINK_LIBRARIES}
-        ${JNI_LIBRARIES})
+        ${JAVA_HOME}/jre/lib/amd64/server/libjvm.so)
 endif()

@@ -14,6 +14,15 @@
 [Release Notes](NEWS.md) |
 [RoadMap](https://github.com/dmlc/xgboost/issues/873)
 
+NOTES on the build
+==========
+1. Make sure the gcc version >= 4.8. Make sure g++/gcc can be found on PATH env.
+2. Make sure the cmake version > 3.2. Make sure cmake can be found on PATH env. 
+3. export JAVA_HOME=/path/to/your/jdk
+4. make clean; make -j4; cd jvm-packages; mvn package 
+5. The build has been verified with gcc 4.8.2, cmake 3.8.2 on a CentOS 6.6 machine.
+
+===========
 XGBoost is an optimized distributed gradient boosting library designed to be highly ***efficient***, ***flexible*** and ***portable***.
 It implements machine learning algorithms under the [Gradient Boosting](https://en.wikipedia.org/wiki/Gradient_boosting) framework.
 XGBoost provides a parallel tree boosting (also known as GBDT, GBM) that solve many data science problems in a fast and accurate way.

@@ -15,7 +15,6 @@
  */
 package ml.dmlc.xgboost4j.java;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.Random;
 

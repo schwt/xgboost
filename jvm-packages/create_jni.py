@@ -58,13 +58,15 @@ def normpath(path):
     """Normalize UNIX path to a native path."""
     return os.path.join(*path.split("/"))
 
+def which(file):
+    for path in os.environ["PATH"].split(os.pathsep):
+      if os.path.exists(os.path.join(path, file)):
+        return os.path.join(path, file)	
 
 if __name__ == "__main__":
     if sys.platform == "darwin":
         # Enable of your compiler supports OpenMP.
         CONFIG["USE_OPENMP"] = "OFF"
-        os.environ["JAVA_HOME"] = check_output(
-            "/usr/libexec/java_home").strip().decode()
 
     print("building Java wrapper")
     with cd(".."):
@@ -77,8 +79,12 @@ if __name__ == "__main__":
                 maybe_generator = ""
 
             args = ["-D{0}:BOOL={1}".format(k, v) for k, v in CONFIG.items()]
-            run("cmake .. " + " ".join(args) + maybe_generator)
-            run("cmake --build .")
+            run("cmake .." \
+	      + " -DCC:STRING=" + which("gcc") \
+	      + " -DCXX:STRING=" + which("g++") \
+	      + " -DJAVA_HOME:STRING=" + os.environ["JAVA_HOME"] \
+	      + " "  +  " ".join(args) + maybe_generator)
+            run("cmake  --build .")
 
         with cd("demo/regression"):
             run(sys.executable + " mapfeat.py")
