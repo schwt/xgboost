@@ -16,13 +16,31 @@
 
 NOTES on the build
 ==========
-1. Make sure the gcc version >= 4.8. Make sure g++/gcc can be found on PATH env.
-2. Make sure the cmake version > 3.2. Make sure cmake can be found on PATH env. 
-3. export JAVA_HOME=/path/to/your/jdk
-4. make clean; make -j4; cd jvm-packages; mvn package 
-5. The build has been verified with gcc 4.8.2, cmake 3.8.2 on a CentOS 6.6 machine.
+1. git clone --recursive https://github.com/dmlc/xgboost.git
+2. Make sure the gcc version >= 4.8. Make sure g++/gcc can be found on PATH env. Make sure the GCC library can be found in runtime.
+   ```
+   export LD_LIBRARY_PATH=${YOUR_GCC_DIRECTORY}/lib64
+   ```
+3. Make sure you use a new verion of ld. I use binutils version 2.2.8. Make sure ld can be found on PATH env.
+4. Make sure the cmake version > 3.2. Make sure cmake can be found on PATH env. 
+5. export JAVA_HOME=/path/to/your/jdk
 6. To enable HDFS support, please modify jvm-packages/create_jni.py. ```"USE_HDFS": "ON"```
-
+   libhdfs.a is not compiled with -fPIC flag, which will cause building problems. 
+   We need to recompile libhdfs.a with -fPIC support by following link https://github.com/dmlc/dmlc-core/issues/10#issuecomment-202246423
+   I have compiled a new libhdfs.a for CDH 5.3.2.
+   ```
+   export HADOOP_HOME=${YOUR_XGBOOST_SRC_DIR}/hadoop-hdfs-2.5.0-cdh5.3.2
+   ```
+7. Make the build
+   ```
+   make clean
+   make -j4
+   cd jvm-packages
+   mvn clean
+   mvn package
+   ```    
+8. The build has been verified with gcc 4.8.2, cmake 3.8.2 on a CentOS 6.6 machine.
+   
 XGBoost
 ===========
 XGBoost is an optimized distributed gradient boosting library designed to be highly ***efficient***, ***flexible*** and ***portable***.
