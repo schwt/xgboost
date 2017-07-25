@@ -1,6 +1,9 @@
 ## changed version by schwt
 - new makefile configure, suitable for my spark context. (done by Sean.Zhong)
 - new predict function (`def my_predict()`), which easy to evaluate.
+##### notes:
+1. added new function `my_predict()` from premal `predict()` in version: java, scala, spark.scala
+2. tocheck: in java version, DMatrix.getLabel(), keep order?
 
 <img src=https://raw.githubusercontent.com/dmlc/dmlc.github.io/master/img/logo-m/xgboost.png width=135/>  eXtreme Gradient Boosting
 ===========
