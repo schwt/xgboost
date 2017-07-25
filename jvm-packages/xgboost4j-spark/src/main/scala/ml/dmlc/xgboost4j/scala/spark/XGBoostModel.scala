@@ -167,6 +167,32 @@ abstract class XGBoostModel(protected var _booster: Booster)
       }
     }
   }
+  /**
+   * return (label, predict)
+   */
+  def my_predict(testSet: RDD[MLDenseVector], missingValue: Float): RDD[Array[Array[Array[Float]]]] = {
+    val broadcastBooster = testSet.sparkContext.broadcast(_booster)
+    testSet.mapPartitions { testSamples =>
+      val sampleArray = testSamples.toList
+      val numRows = sampleArray.size
+      val numColumns = sampleArray.head.size
+      if (numRows == 0) {
+        Iterator()
+      } else {
+        val rabitEnv = Map("DMLC_TASK_ID" -> TaskContext.getPartitionId().toString)
+        Rabit.init(rabitEnv.asJava)
+        // translate to required format
+        val flatSampleArray = new Array[Float](numRows * numColumns)
+        for (i <- flatSampleArray.indices) {
+          flatSampleArray(i) = sampleArray(i / numColumns).values(i % numColumns).toFloat
+        }
+        val dMatrix = new DMatrix(flatSampleArray, numRows, numColumns, missingValue)
+        val res = broadcastBooster.value.my_predict(dMatrix)
+        Rabit.shutdown()
+        Iterator(res)
+      }
+    }
+  }
 
   /**
    * Predict result with the given test set (represented as RDD)

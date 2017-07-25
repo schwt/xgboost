@@ -258,6 +258,37 @@ public class Booster implements Serializable, KryoSerializable {
   }
 
   /**
+   * return lists(label, predict)
+   */
+  private synchronized float[][][] my_predict(DMatrix data,
+                                              boolean outputMargin,
+                                              int treeLimit,
+                                              boolean predLeaf) throws XGBoostError {
+    int optionMask = 0;
+    if (outputMargin) {
+      optionMask = 1;
+    }
+    if (predLeaf) {
+      optionMask = 2;
+    }
+    float[][] rawPredicts = new float[1][];
+    JNIErrorHandle.checkCall(XGBoostJNI.XGBoosterPredict(handle, data.getHandle(), optionMask,
+            treeLimit, rawPredicts));
+    int row = (int) data.rowNum();
+    int col = rawPredicts[0].length / row;
+    float[][][] predicts = new float[row][col][2];
+    float[] labels = data.getLabel()
+    int r, c;
+    for (int i = 0; i < rawPredicts[0].length; i++) {
+      r = i / col;
+      c = i % col;
+      predicts[r][c][0] = labels[i];
+      predicts[r][c][1] = rawPredicts[0][i];
+    }
+    return predicts;
+  }
+
+  /**
    * Predict leaf indices given the data
    *
    * @param data The input data.

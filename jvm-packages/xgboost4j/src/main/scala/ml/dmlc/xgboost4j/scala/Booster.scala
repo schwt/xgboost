@@ -127,6 +127,15 @@ class Booster private[xgboost4j](private var booster: JBooster)
   }
 
   /**
+   * return float[][][label, predict]
+   */
+  @throws(classOf[XGBoostError])
+  def my_predict(data: DMatrix, outPutMargin: Boolean = false, treeLimit: Int = 0)
+      : Array[Array[Float]] = {
+    booster.predict(data.jDMatrix, outPutMargin, treeLimit)
+  }
+
+  /**
    * Predict the leaf indices
    *
    * @param data      dmatrix storing the input
